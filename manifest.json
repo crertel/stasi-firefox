@@ -1,0 +1,30 @@
+{
+
+  "manifest_version": 2,
+  "name": "Stasi",
+  "version": "1.0",
+
+  "description": "Reports browsing activity out to a third-party provider.",
+
+  "icons": {
+    "48": "icons/stasi-48.png",
+    "96": "icons/stasi-96.png"
+  },
+
+  "browser_action": {
+    "default_icon": {
+      "16": "icons/stasi-16.png",
+      "32": "icons/stasi-32.png"
+    },
+    "default_title": "Stasi"
+  },
+
+  "permissions": [
+    "webRequest",
+    "<all_urls>"
+  ],
+
+  "background": {
+    "scripts": ["stasi.js"]
+  }
+}
