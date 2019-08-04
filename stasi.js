@@ -1,20 +1,31 @@
 console.log("stasi started");
-browser.webRequest.onBeforeSendHeaders.addListener(
-    (details) => {        
-        var url = details.url;
-        var headers = details.requestHeaders;
-        var sentAt = new Date(details.timeStamp);
-        var requestId = details.requestId;
-        var originUrl = details.originUrl;
-        var method = details.method;
-        var type = details.type;
-        //console.log(`REQ ${sentAt} ${requestId} ${method} ${url} ${JSON.stringify(headers)}`)
-    },
-    {urls:["http://*/*", "https://*/*"]},
-    ["requestHeaders"]
-);
+// browser.webRequest.onBeforeSendHeaders.addListener(
+//     (details) => {        
+//         var url = details.url;
+//         var headers = details.requestHeaders;
+//         var sentAt = new Date(details.timeStamp);
+//         var requestId = details.requestId;
+//         var originUrl = details.originUrl;
+//         var method = details.method;
+//         var type = details.type;
+//         //console.log(`REQ ${sentAt} ${requestId} ${method} ${url} ${JSON.stringify(headers)}`)
+//     },
+//     {urls:["http://*/*", "https://*/*"]},
+//     ["requestHeaders"]
+// );
 
 var stasi_url = "http://localhost:4000/report"
+
+function getHeader(headers, key) {
+    let ret = false;
+    for( let header of headers) {
+        if(header.name.toLowerCase() === key) {
+            ret =  header.value;
+            break;
+        }
+    }
+    return ret;
+}
 
 browser.webRequest.onCompleted.addListener(
     (details) => {
@@ -45,11 +56,14 @@ browser.webRequest.onCompleted.addListener(
                     origin_url: originUrl,
                     status_code: statusCode,
                     completed_at: completedAt.toISOString(),
-                    method: method
+                    method: method,
+                    "content_type": getHeader(responseHeaders, "content-type"),
+                    "content_length": getHeader(responseHeaders, "content-length")
                 })
             });
         }
     },
 
-    {urls:["http://*/*", "https://*/*"]}
+    {urls:["http://*/*", "https://*/*"]},
+    ["responseHeaders"]
 );
